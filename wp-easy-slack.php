@@ -19,15 +19,15 @@ class WP_Easy_Slack {
 	public function __construct()
     {
 
-		register_activation_hook(__FILE__,	array($this, 'activate'));
-		register_deactivation_hook(__FILE__,array($this, 'deactivate'));
+		register_activation_hook(__FILE__, array($this, 'activate'));
+		register_deactivation_hook(__FILE__, array($this, 'deactivate'));
 
-		add_action( 'save_post', 	array($this, 'notification'), 10, 2);
-		add_action( 'admin_menu',   array($this, 'admin_menu'));
+		add_action( 'save_post', array($this, 'notification'), 10, 2);
+		add_action( 'admin_menu', array($this, 'admin_menu'));
 
-		$this->webhook_url	= get_option('es_webhook_url');
-		$this->post_status  = get_option('es_post_status');
-		$this->bot 			= $_SERVER['SERVER_NAME'];
+		$this->webhook_url	=	get_option('es_webhook_url');
+		$this->post_status	=	get_option('es_post_status');
+		$this->bot			=	$_SERVER['SERVER_NAME'];
 
     }
 	public static function activate(){}
@@ -38,10 +38,10 @@ class WP_Easy_Slack {
 		$this->post_id = $post_id; 
 		if($post->post_status == $this->post_status){
 			$send = ['payload'=>json_encode([
-											'text'			=> $this->message(),
-											'username'		=> $this->bot,
-											'icon_emoji'	=> ':bulb:',
-											])];
+						'text'			=> $this->message(),
+						'username'		=> $this->bot,
+						'icon_emoji'	=> ':bulb:',
+					])];
 			$data = wp_remote_request($this->webhook_url, array('method'=>'POST', 'body'=>$send));
 		}
 	}
@@ -61,13 +61,13 @@ class WP_Easy_Slack {
 	{
 		$string = get_option('es_message');
 		$replacements = [
-				'%title%'		=> get_the_title($this->post_id),
-				'%post_status%' => get_post_status($this->post_id),
-				'%post_url%' 	=> get_the_permalink($this->post_id),
-				'%edit_url%' 	=> 'http://'.$_SERVER['SERVER_NAME'].'/wp-admin/post.php?post='.$this->post_id.'&action=edit',
-				'%site_url%'	=> 'http://'.$_SERVER['SERVER_NAME'].'/',
-				'%host%'		=> $_SERVER['SERVER_NAME']
-				];
+			'%title%'		=> get_the_title($this->post_id),
+			'%post_status%' => get_post_status($this->post_id),
+			'%post_url%' 	=> get_the_permalink($this->post_id),
+			'%edit_url%' 	=> 'http://'.$_SERVER['SERVER_NAME'].'/wp-admin/post.php?post='.$this->post_id.'&action=edit',
+			'%site_url%'	=> 'http://'.$_SERVER['SERVER_NAME'].'/',
+			'%host%'		=> $_SERVER['SERVER_NAME']
+			];
 
 		foreach ( $replacements as $var => $repl ) {
 			$string = str_replace( $var, $repl, $string );
