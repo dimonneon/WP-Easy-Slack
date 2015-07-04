@@ -30,7 +30,14 @@ class WP_Easy_Slack {
 		$this->bot			=	$_SERVER['SERVER_NAME'];
 
     }
-	public static function activate(){}
+	public static function activate(){
+		if(!get_option('es_post_status')){ 
+			update_option('es_post_status', 'pending');
+		}
+		if(!get_option('es_message')){ 
+			update_option('es_message', 'New post %post_status%: <%edit_url%|:pencil: %title%> on <%site_url%|%host%>');
+		}
+	}
 	public static function deactivate(){}
 
 	public function notification( $post_id , $post )
